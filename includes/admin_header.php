@@ -87,7 +87,7 @@ $profile_img = "../uploads/profiles/" . $image_file;
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-main sticky-top shadow-sm">
     <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="<?= BASE_URL ?>/dashboard.php">
+        <a class="navbar-brand fw-bold" href="<?= BASE_URL ?>/admin/dashboard.php">
             <i class="bi bi-tools me-1"></i> KYL CARE | Admin Panel
         </a>
         
@@ -98,7 +98,7 @@ $profile_img = "../uploads/profiles/" . $image_file;
                 <img src="<?= $profile_img ?>?v=<?= time() ?>" class="nav-profile-img shadow-sm">
             </button>
             <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 rounded-3">
-                <li><a class="dropdown-item py-2" href="profile.php"><i class="bi bi-person-circle me-2"></i> ข้อมูลส่วนตัว</a></li>
+                <li><a class="dropdown-item py-2" href="<?= BASE_URL ?>/admin/profile.php"><i class="bi bi-person-circle me-2"></i> ข้อมูลส่วนตัว</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item py-2 text-danger" href="javascript:void(0)" onclick="confirmLogout()"><i class="bi bi-box-arrow-right me-2"></i> ออกจากระบบ</a></li>
             </ul>
@@ -111,31 +111,31 @@ $profile_img = "../uploads/profiles/" . $image_file;
         <!-- Sidebar -->
         <nav class="col-md-3 col-lg-2 sidebar d-none d-md-block pt-2">
             <div class="nav flex-column">
-                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'dashboard.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/dashboard.php">
+                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'dashboard.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/admin/dashboard.php">
                     <i class="bi bi-grid-1x2-fill me-2"></i> Dashboard & Report
                 </a>
 
-                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'user_monitoring.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/user_monitoring.php">
+                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'user_monitoring.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/admin/user_monitoring.php">
                     <i class="bi bi-person-vcard-fill me-2"></i> ติดตามงาน
                 </a>
 
-                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'technicians.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/technicians.php">
+                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'technicians.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/admin/technicians.php">
                     <i class="bi bi-person-badge-fill me-2"></i> ข้อมูลผู้ใช้งาน
                 </a>
 
-                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'manage_assets.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/manage_assets.php">
+                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'manage_assets.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/admin/manage_assets.php">
                     <i class="bi bi-diagram-3-fill me-2"></i> ข้อมูลห้องและอุปกรณ์
                 </a>
 
-                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'repeat_repairs.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/repeat_repairs.php">
+                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'repeat_repairs.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/admin/repeat_repairs.php">
                     <i class="bi bi-arrow-repeat me-2"></i> รายการแจ้งซ่อมซ้ำ
                 </a>
 
-                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'all_repairs.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/all_repairs.php">
+                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'all_repairs.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/admin/all_repairs.php">
                     <i class="bi bi-clipboard-data-fill me-2"></i> รายการแจ้งซ่อมทั้งหมด
                 </a>
 
-                <!-- <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'manage_history.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/manage_history.php">
+                <!-- <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'manage_history.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/admin/manage_history.php">
                     </i> ลบประวัติ
                 </a> -->
             </div>

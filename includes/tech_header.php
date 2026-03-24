@@ -81,13 +81,13 @@ $count_my_jobs = $conn->query("SELECT id FROM repair_requests WHERE technician_i
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-main sticky-top">
     <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="<?= BASE_URL ?>/dashboard.php">KYL CARE | Technician</a>
+        <a class="navbar-brand fw-bold" href="<?= BASE_URL ?>/technician/dashboard.php">KYL CARE | Technician</a>
         <div class="d-flex align-items-center">
             <span class="text-white me-3 d-none d-md-block">ช่าง: <?= h($_SESSION['full_name']) ?></span>
             <div class="dropdown">
                 <img src="<?= $profile_img ?>" width="35" height="35" class="rounded-circle border" data-bs-toggle="dropdown" role="button">
                 <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
-                    <li><a class="dropdown-item" href="profile.php"><i class="bi bi-person me-2"></i> ข้อมูลส่วนตัว</a></li>
+                    <li><a class="dropdown-item" href="<?= BASE_URL ?>/technician/profile.php"><i class="bi bi-person me-2"></i> ข้อมูลส่วนตัว</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item text-danger" href="javascript:void(0)" onclick="confirmLogout()"><i class="bi bi-box-arrow-right me-2"></i> ออกจากระบบ</a></li>
                 </ul>
@@ -101,12 +101,12 @@ $count_my_jobs = $conn->query("SELECT id FROM repair_requests WHERE technician_i
         <!-- Sidebar -->
         <nav class="col-md-3 col-lg-2 sidebar d-none d-md-block pt-3">
             <div class="nav flex-column">
-                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'dashboard.php' ? 'active' : '' ?>" href="dashboard.php">
+                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'dashboard.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/technician/dashboard.php">
                     <i class="bi bi-grid-1x2-fill me-2"></i> แผงควบคุม
                 </a>
 
                 <!-- งานที่ยังไม่รับ (แสดงถ้ามีงานเข้า) -->
-                <a class="nav-link d-flex justify-content-between align-items-center <?= basename($_SERVER['PHP_SELF']) == 'available_jobs.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/available_jobs.php">
+                <a class="nav-link d-flex justify-content-between align-items-center <?= basename($_SERVER['PHP_SELF']) == 'available_jobs.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/technician/available_jobs.php">
                     <span><i class="bi bi-tools me-2"></i> งานที่ยังไม่รับ</span>
                     <?php if ($count_pending > 0): ?>
                         <span class="badge rounded-pill bg-primary" style="font-size: 0.7rem; padding: 0.4em 0.8em; background-color: #003366 !important;">
@@ -116,7 +116,7 @@ $count_my_jobs = $conn->query("SELECT id FROM repair_requests WHERE technician_i
                 </a>
 
                 <!-- งานของฉัน (แสดงสีน้ำเงินเพื่อแจ้งยอดสะสม) -->
-                <a class="nav-link d-flex justify-content-between align-items-center <?= basename($_SERVER['PHP_SELF']) == 'my_jobs.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/my_jobs.php">
+                <a class="nav-link d-flex justify-content-between align-items-center <?= basename($_SERVER['PHP_SELF']) == 'my_jobs.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/technician/my_jobs.php">
                     <span><i class="bi bi-clipboard-check me-2"></i> งานของฉัน</span>
                     <?php if ($count_my_jobs > 0): ?>
                         <span class="badge rounded-pill bg-primary" style="font-size: 0.7rem; padding: 0.4em 0.8em; background-color: #003366 !important;">
@@ -125,7 +125,7 @@ $count_my_jobs = $conn->query("SELECT id FROM repair_requests WHERE technician_i
                     <?php endif; ?>
                 </a>
 
-                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'history.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/history.php">
+                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'history.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/technician/history.php">
                     <i class="bi bi-clock-history me-2"></i> ประวัติการซ่อม
                 </a>
             </div>

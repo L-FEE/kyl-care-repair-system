@@ -65,7 +65,7 @@ $res = $conn->query($sql);
         <div class="col-md-2"></div>
         <div class="col-md-2 d-flex gap-2">
             <button type="submit" class="btn btn-sm btn-primary w-100">ค้นหา</button>
-            <a href="<?= BASE_URL ?>/manage_history.php" class="btn btn-sm btn-light border w-50" title="ล้างการกรอง"><i class="bi bi-arrow-counterclockwise"></i></a>
+            <a href="<?= BASE_URL ?>/manage_history.php" class="btn btn-sm btn-light border w-50" title="ล้างค่า"><i class="bi bi-arrow-counterclockwise"></i></a>
         </div>
     </form>
 </div>

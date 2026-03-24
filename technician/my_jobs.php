@@ -138,7 +138,7 @@ $stats['total'] = $stats['accepted'] + $stats['working'] + $stats['waiting'];
                         <?= getStatusBadge($row['status']) ?>
                     </td>
                     <td class="text-end pe-4">
-                        <a href="<?= BASE_URL ?>/job_detail.php?id=<?= $row['id'] ?>" class="btn btn-manage btn-sm shadow-sm">
+                        <a href="<?= BASE_URL ?>/technician/job_detail.php?id=<?= $row['id'] ?>" class="btn btn-manage btn-sm shadow-sm">
                             <i class="bi bi-pencil-square me-1"></i> จัดการงาน
                         </a>
                     </td>
