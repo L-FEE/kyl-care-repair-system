@@ -81,7 +81,7 @@ $count_my_jobs = $conn->query("SELECT id FROM repair_requests WHERE technician_i
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-main sticky-top">
     <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="dashboard.php">KYL CARE | Technician</a>
+        <a class="navbar-brand fw-bold" href="<?= BASE_URL ?>/dashboard.php">KYL CARE | Technician</a>
         <div class="d-flex align-items-center">
             <span class="text-white me-3 d-none d-md-block">ช่าง: <?= h($_SESSION['full_name']) ?></span>
             <div class="dropdown">
@@ -106,7 +106,7 @@ $count_my_jobs = $conn->query("SELECT id FROM repair_requests WHERE technician_i
                 </a>
 
                 <!-- งานที่ยังไม่รับ (แสดงถ้ามีงานเข้า) -->
-                <a class="nav-link d-flex justify-content-between align-items-center <?= basename($_SERVER['PHP_SELF']) == 'available_jobs.php' ? 'active' : '' ?>" href="available_jobs.php">
+                <a class="nav-link d-flex justify-content-between align-items-center <?= basename($_SERVER['PHP_SELF']) == 'available_jobs.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/available_jobs.php">
                     <span><i class="bi bi-tools me-2"></i> งานที่ยังไม่รับ</span>
                     <?php if ($count_pending > 0): ?>
                         <span class="badge rounded-pill bg-primary" style="font-size: 0.7rem; padding: 0.4em 0.8em; background-color: #003366 !important;">
@@ -116,7 +116,7 @@ $count_my_jobs = $conn->query("SELECT id FROM repair_requests WHERE technician_i
                 </a>
 
                 <!-- งานของฉัน (แสดงสีน้ำเงินเพื่อแจ้งยอดสะสม) -->
-                <a class="nav-link d-flex justify-content-between align-items-center <?= basename($_SERVER['PHP_SELF']) == 'my_jobs.php' ? 'active' : '' ?>" href="my_jobs.php">
+                <a class="nav-link d-flex justify-content-between align-items-center <?= basename($_SERVER['PHP_SELF']) == 'my_jobs.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/my_jobs.php">
                     <span><i class="bi bi-clipboard-check me-2"></i> งานของฉัน</span>
                     <?php if ($count_my_jobs > 0): ?>
                         <span class="badge rounded-pill bg-primary" style="font-size: 0.7rem; padding: 0.4em 0.8em; background-color: #003366 !important;">
@@ -125,7 +125,7 @@ $count_my_jobs = $conn->query("SELECT id FROM repair_requests WHERE technician_i
                     <?php endif; ?>
                 </a>
 
-                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'history.php' ? 'active' : '' ?>" href="history.php">
+                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'history.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/history.php">
                     <i class="bi bi-clock-history me-2"></i> ประวัติการซ่อม
                 </a>
             </div>

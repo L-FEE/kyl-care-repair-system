@@ -42,7 +42,7 @@ $image_count_in_db = $check_imgs->num_rows;
 <div class="main-wrapper">
     <div class="content-area">
         <div class="d-flex align-items-center mb-3">
-            <a href="my_jobs.php" class="btn btn-white bg-white text-dark me-3 rounded-circle shadow-sm border-0"><i class="bi bi-chevron-left"></i></a>
+            <a href="<?= BASE_URL ?>/my_jobs.php" class="btn btn-white bg-white text-dark me-3 rounded-circle shadow-sm border-0"><i class="bi bi-chevron-left"></i></a>
             <div>
                 <h4 class="fw-bold m-0" style="color:#003366;"><?= $job['request_code'] ?></h4>
                 <div class="mt-1"><?= getStatusBadge($job['status']) ?></div>

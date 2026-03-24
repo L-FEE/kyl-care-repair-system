@@ -74,7 +74,7 @@ $stats = [
             </select>
         </div>
         <div class="col-auto">
-            <a href="dashboard.php" class="btn btn-sm btn-outline-secondary shadow-sm">คืนค่า</a>
+            <a href="<?= BASE_URL ?>/dashboard.php" class="btn btn-sm btn-outline-secondary shadow-sm">คืนค่า</a>
         </div>
     </form>
 </div>

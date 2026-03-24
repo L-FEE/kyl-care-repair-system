@@ -87,7 +87,7 @@ $profile_img = "../uploads/profiles/" . $image_file;
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-main sticky-top shadow-sm">
     <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="dashboard.php">
+        <a class="navbar-brand fw-bold" href="<?= BASE_URL ?>/dashboard.php">
             <i class="bi bi-tools me-1"></i> KYL CARE | Admin Panel
         </a>
         
@@ -111,31 +111,31 @@ $profile_img = "../uploads/profiles/" . $image_file;
         <!-- Sidebar -->
         <nav class="col-md-3 col-lg-2 sidebar d-none d-md-block pt-2">
             <div class="nav flex-column">
-                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'dashboard.php' ? 'active' : '' ?>" href="dashboard.php">
+                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'dashboard.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/dashboard.php">
                     <i class="bi bi-grid-1x2-fill me-2"></i> Dashboard & Report
                 </a>
 
-                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'user_monitoring.php' ? 'active' : '' ?>" href="user_monitoring.php">
+                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'user_monitoring.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/user_monitoring.php">
                     <i class="bi bi-person-vcard-fill me-2"></i> ติดตามงาน
                 </a>
 
-                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'technicians.php' ? 'active' : '' ?>" href="technicians.php">
+                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'technicians.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/technicians.php">
                     <i class="bi bi-person-badge-fill me-2"></i> ข้อมูลผู้ใช้งาน
                 </a>
 
-                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'manage_assets.php' ? 'active' : '' ?>" href="manage_assets.php">
+                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'manage_assets.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/manage_assets.php">
                     <i class="bi bi-diagram-3-fill me-2"></i> ข้อมูลห้องและอุปกรณ์
                 </a>
 
-                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'repeat_repairs.php' ? 'active' : '' ?>" href="repeat_repairs.php">
+                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'repeat_repairs.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/repeat_repairs.php">
                     <i class="bi bi-arrow-repeat me-2"></i> รายการแจ้งซ่อมซ้ำ
                 </a>
 
-                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'all_repairs.php' ? 'active' : '' ?>" href="all_repairs.php">
+                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'all_repairs.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/all_repairs.php">
                     <i class="bi bi-clipboard-data-fill me-2"></i> รายการแจ้งซ่อมทั้งหมด
                 </a>
 
-                <!-- <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'manage_history.php' ? 'active' : '' ?>" href="manage_history.php">
+                <!-- <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'manage_history.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/manage_history.php">
                     </i> ลบประวัติ
                 </a> -->
             </div>

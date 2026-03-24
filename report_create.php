@@ -79,7 +79,7 @@
             </button>
 
             <div class="text-center mt-4">
-                <a href="index.php" class="text-decoration-none text-muted small"><i class="bi bi-arrow-left"></i> ย้อนกลับ</a>
+                <a href="<?= BASE_URL ?>/index.php" class="text-decoration-none text-muted small"><i class="bi bi-arrow-left"></i> ย้อนกลับ</a>
             </div>
         </form>
     </div>

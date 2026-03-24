@@ -58,7 +58,7 @@ $current_tab = $_GET['tab'] ?? 'active';
         
         <div class="col-md-auto ms-auto d-flex gap-2">
             <!-- ปุ่มรีเซ็ตไอคอน -->
-            <a href="repeat_repairs.php?tab=<?= $current_tab ?>" class="btn btn-sm btn-outline-secondary px-3 rounded-3" title="ล้างค่า" style="height: 31px; display: flex; align-items: center;">
+            <a href="<?= BASE_URL ?>/repeat_repairs.php?tab=<?= $current_tab ?>" class="btn btn-sm btn-outline-secondary px-3 rounded-3" title="ล้างค่า" style="height: 31px; display: flex; align-items: center;">
                 <i class="bi bi-arrow-counterclockwise"></i>
             </a>
             <!-- ปุ่ม EXCEL ปรับขนาดให้เป็นมาตรฐาน -->

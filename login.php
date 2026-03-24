@@ -50,7 +50,7 @@ if (isset($_SESSION['user_id'])) {
             </div>
             <button type="submit" class="btn btn-main">เข้าสู่ระบบ</button>
             <div class="text-center mt-4">
-                <a href="index.php" class="text-decoration-none text-muted" style="font-size: 0.9rem;"><i class="bi bi-arrow-left"></i> ย้อนกลับ</a>
+                <a href="<?= BASE_URL ?>/index.php" class="text-decoration-none text-muted" style="font-size: 0.9rem;"><i class="bi bi-arrow-left"></i> ย้อนกลับ</a>
             </div>
         </form>
     </div>

@@ -87,7 +87,7 @@ $res = $conn->query($sql);
         </div>
         <div class="col-md-3 d-flex gap-2">
             <button type="submit" class="btn btn-sm btn-primary w-100 fw-bold rounded-3 shadow-sm"><i class="bi bi-search"></i> ค้นหา</button>
-            <a href="all_repairs.php" class="btn btn-sm btn-outline-secondary px-3 rounded-3" title="ล้างค่า"><i class="bi bi-arrow-counterclockwise"></i></a>
+            <a href="<?= BASE_URL ?>/all_repairs.php" class="btn btn-sm btn-outline-secondary px-3 rounded-3" title="ล้างค่า"><i class="bi bi-arrow-counterclockwise"></i></a>
             <button type="button" onclick="exportToExcel()" class="btn btn-sm btn-success w-100 fw-bold rounded-3 shadow-sm"><i class="bi bi-file-earmark-excel"></i> EXCEL</button>
         </div>
     </form>

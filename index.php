@@ -33,7 +33,7 @@ require_once 'includes/functions.php';
 <nav class="navbar navbar-expand-lg navbar-dark bg-main shadow-sm sticky-top">
     <div class="container">
         <!-- Logo ลิงก์กลับหน้าแรก -->
-        <a class="navbar-brand fw-bold" href="index.php">
+        <a class="navbar-brand fw-bold" href="<?= BASE_URL ?>/index.php">
             <i class="bi bi-tools me-2"></i>KYL CARE
         </a>
         
@@ -45,17 +45,17 @@ require_once 'includes/functions.php';
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-center">
                 <li class="nav-item">
-                    <a class="nav-link active" href="index.php">
+                    <a class="nav-link active" href="<?= BASE_URL ?>/index.php">
                         <i class="bi bi-house-door me-1"></i>หน้าแรก/ติดตามสถานะ
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="report_create.php">
+                    <a class="nav-link" href="<?= BASE_URL ?>/report_create.php">
                         <i class="bi bi-plus-circle me-1"></i>แจ้งซ่อมอุปกรณ์
                     </a>
                 </li>
                 <li class="nav-item ms-lg-3">
-                    <a href="login.php" class="btn btn-outline-light btn-sm px-3 rounded-pill">
+                    <a href="<?= BASE_URL ?>/login.php" class="btn btn-outline-light btn-sm px-3 rounded-pill">
                         <i class="bi bi-person-lock me-1"></i>สำหรับเจ้าหน้าที่
                     </a>
                 </li>
@@ -79,7 +79,7 @@ require_once 'includes/functions.php';
             </div>
         </div>
         <div class="mt-5">
-            <a href="report_create.php" class="btn btn-report shadow"><i class="bi bi-plus-circle me-2"></i> แจ้งซ่อม </a>
+            <a href="<?= BASE_URL ?>/report_create.php" class="btn btn-report shadow"><i class="bi bi-plus-circle me-2"></i> แจ้งซ่อม </a>
         </div>
     </div>
 </div>
