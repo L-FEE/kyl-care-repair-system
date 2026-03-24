@@ -61,7 +61,7 @@ $stats = [
             </select>
         </div>
         <div class="col-auto">
-            <a href="dashboard.php" class="btn btn-sm btn-outline-secondary">วันนี้</a>
+            <a href="dashboard.php" class="btn btn-sm btn-outline-secondary">รีเซ็ต</a>
         </div>
     </form>
 </div>
