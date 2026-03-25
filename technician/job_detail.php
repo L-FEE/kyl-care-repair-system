@@ -157,7 +157,7 @@ function updateStep(status) {
         if(r.isConfirmed) {
             // ปรับวิธีเรียกเป็น AJAX แบบละเอียดเพื่อให้ชัวร์เรื่อง location.reload()
             $.ajax({
-                url: '../api/tech_actions.php',
+                url: '<?= BASE_URL ?>/api/tech_actions.php',
                 type: 'POST',
                 data: { action: 'update_status', job_id: <?= $id ?>, new_status: status, tech_note: note },
                 success: function(res) { location.reload(); },
@@ -224,11 +224,11 @@ function openSmartSetup(hist = null, cache = null) {
 }
 
 function initSmartDrops(hist, cache) {
-    $.getJSON('../api/tech_get_dropdown_data.php?type=locations', d => {
+    $.getJSON('<?= BASE_URL ?>/api/tech_get_dropdown_data.php?type=locations', d => {
         $('#sw-l').append('<option value="">-- โปรดระบุห้อง --</option>');
         d.forEach(i => $('#sw-l').append(new Option(i.display_name, i.id, false, cache ? cache.l == i.id : (jobConf.f+' - '+jobConf.l) === i.display_name)));
     });
-    $.getJSON('../api/tech_get_dropdown_data.php?type=categories', d => {
+    $.getJSON('<?= BASE_URL ?>/api/tech_get_dropdown_data.php?type=categories', d => {
         $('#sw-c').append('<option value="">-- เลือกประเภท --</option>');
         d.forEach(i => {
             let active = (hist && hist.type==='category' && hist.id == i.id) || (cache ? cache.cid == i.id : i.category_name === jobConf.c);
@@ -240,7 +240,7 @@ function initSmartDrops(hist, cache) {
     $('#sw-c').on('change', function() {
         const cid = $(this).val(); if(cid === 'ADD') return addNewEntry('category', 0);
         $('#sw-d').empty().append('<option value="">-- เลือกรายการ --</option>').prop('disabled', !cid);
-        if(cid && $.isNumeric(cid)) $.getJSON('../api/tech_get_dropdown_data.php?type=devices&parent_id='+cid, data => {
+        if(cid && $.isNumeric(cid)) $.getJSON('<?= BASE_URL ?>/api/tech_get_dropdown_data.php?type=devices&parent_id='+cid, data => {
             data.forEach(i => {
                 let active = (hist && hist.type==='device' && hist.id == i.id) || (cache ? cache.did == i.id : i.device_name === jobConf.d);
                 $('#sw-d').append(new Option(i.device_name, i.id, false, active));
@@ -252,7 +252,7 @@ function initSmartDrops(hist, cache) {
     $('#sw-d').on('change', function() {
         const did = $(this).val(); if(did === 'ADD') return addNewEntry('device', $('#sw-c').val());
         $('#sw-f').empty().append('<option value="">-- เลือกอาการจริง --</option>').prop('disabled', !did);
-        if(did && $.isNumeric(did)) $.getJSON('../api/tech_get_dropdown_data.php?type=faults&parent_id='+did, data => {
+        if(did && $.isNumeric(did)) $.getJSON('<?= BASE_URL ?>/api/tech_get_dropdown_data.php?type=faults&parent_id='+did, data => {
             data.forEach(i => {
                 let active = (hist && hist.type==='fault' && hist.id == i.id) || (cache ? cache.fid == i.id : i.fault_name === jobConf.ft);
                 $('#sw-f').append(new Option(i.fault_name, i.id, false, active));
@@ -268,7 +268,7 @@ function addNewEntry(type, pid) {
     Swal.fire({
         title: 'เพิ่มเข้าฐานข้อมูลหลัก', input: 'text', showCancelButton: true, confirmButtonColor: '#003366', 
         cancelButtonText: 'ยกเลิก',
-        preConfirm: n => { if(!n) return Swal.showValidationMessage('กรอกชื่อที่ต้องการ'); return $.post('../api/tech_add_master_data.php', {type, name:n, parent_id:pid}); }
+        preConfirm: n => { if(!n) return Swal.showValidationMessage('กรอกชื่อที่ต้องการ'); return $.post('<?= BASE_URL ?>/api/tech_add_master_data.php', {type, name:n, parent_id:pid}); }
     }).then(r => { if(r.isConfirmed) openSmartSetup({type, id: r.value.new_id}, cache); else openSmartSetup(null, cache); });
 }
 
@@ -278,7 +278,7 @@ function commitBigSave(v) {
     fd.append('tech_note', $('#tech_note').val()); fd.append('location_input', v.l);
     fd.append('category_name', v.cn); fd.append('device_name', v.dn); fd.append('fault_name', v.fn); fd.append('serial_number', v.sn);
     for(let i=0; i<v.imgs.length; i++) fd.append('repair_images[]', v.imgs[i]);
-    $.ajax({ url:'../api/tech_actions.php', type:'POST', data:fd, processData:false, contentType:false, success: () => location.reload() });
+    $.ajax({ url:'<?= BASE_URL ?>/api/tech_actions.php', type:'POST', data:fd, processData:false, contentType:false, success: () => location.reload() });
 }
 </script>
 
