@@ -89,7 +89,7 @@ $image_count_in_db = $check_imgs->num_rows;
             <h6 class="fw-bold mb-4" style="color: #003366;"><i class="bi bi-patch-check-fill me-1"></i>ดำเนินการ</h6>
             <div class="flex-grow-1">
                 <?php $s = $job['status']; if($s === 'accepted'): ?>
-                    <button onclick="updateStep('in_progress')" class="btn btn-primary btn-action-sm shadow w-100 py-3"><i class="bi bi-tools"></i>เริ่มบันทึกหน้างาน</button>
+                    <button onclick="updateStep('in_progress')" class="btn btn-primary btn-action-sm shadow w-100 py-3"><i class="bi bi-tools"></i>เริ่มบันทึกงาน</button>
                 <?php elseif($s === 'in_progress' || $s === 'waiting_parts'): ?>
                     <?php if($s === 'in_progress'): ?>
                         <button onclick="updateStep('completed')" class="btn btn-success btn-action-sm w-100 mb-2 shadow-sm">✅ ซ่อมสำเร็จ / ปิดงาน</button>
