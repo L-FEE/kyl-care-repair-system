@@ -37,7 +37,7 @@ if (!$row) echo "<div class='p-4 text-center'>ไม่พบข้อมูล<
                 <tr><td class="text-muted">S/N:</td><td><?= h($row['serial_number'] ?: '-') ?></td></tr>
                 <tr><td class="text-muted">สถานะ:</td><td><?= getStatusBadge($row['status']) ?></td></tr>
                 <tr><td class="text-muted">ช่าง:</td><td><?= h($row['tech_name'] ?: 'ยังไม่มีช่างรับงาน') ?></td></tr>
-                <tr><td class="text-muted">วันที่ซ่อมเสร็จ:</td><td><?= date('d/m/Y H:i', strtotime($row['finished_at'])) ?></td></tr>
+                <tr><td class="text-muted">วันที่ซ่อมเสร็จ:</td><td><?= (!empty($row['finished_at'])) ? date('d/m/Y H:i', strtotime($row['finished_at'])) : '-' ?></td></tr>
             </table>
         </div>
 
