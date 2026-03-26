@@ -17,11 +17,23 @@ $job = $stmt->get_result()->fetch_assoc();
 if (!$job) { 
     echo "<script>location.href='" . BASE_URL . "/technician/my_jobs.php';</script>"; 
     exit; 
-}
+}  
 
 // เช็คจำนวนรูปที่มีในฐานข้อมูลเพื่อใช้บังคับกรณีรูปว่าง
 $check_imgs = $conn->query("SELECT id FROM repair_images WHERE repair_request_id = $id");
 $image_count_in_db = (int)$check_imgs->num_rows;
+
+// ✅ แก้ไข: เตรียม jobValues ด้วย json_encode ฝั่ง PHP ป้องกัน JS syntax error ทุกกรณี
+$jobValuesJson = json_encode([
+    'st'           => $job['status'],
+    'floor'        => $job['floor_name'],
+    'loc'          => $job['location_name'],
+    'cat'          => $job['category_name'],
+    'dev'          => $job['device_name'],
+    'flt'          => $job['fault_name'],
+    'sn'           => $job['serial_number'],
+    'img_db_count' => $image_count_in_db,
+], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 ?>
 
 <!-- Fancybox 5 CSS -->
@@ -101,7 +113,7 @@ $image_count_in_db = (int)$check_imgs->num_rows;
         </div>
     </div>
 
-    <!-- ฝั่งขวา: ปรับสถานะ (UI ที่คุณต้องการ) -->
+    <!-- ฝั่งขวา: ปรับสถานะ -->
     <div class="sidebar-area">
         <div class="card-modern h-100 d-flex flex-column shadow-sm">
             <h6 class="fw-bold mb-4" style="color: #003366;"><i class="bi bi-gear-fill me-1"></i>ดำเนินการ</h6>
@@ -140,51 +152,75 @@ $image_count_in_db = (int)$check_imgs->num_rows;
 
 <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
 <script>
-// --- กำหนดค่าสำคัญจากระบบ ป้องกัน Error บน Server ---
-const API_URL = '<?= BASE_URL ?>/api/tech_actions.php';
+// ✅ แก้ไข 1: ใช้ json_encode ฝั่ง PHP แทนการ embed string ตรงๆ
+// ป้องกัน JS syntax error จากข้อมูลที่มี quote, newline หรืออักขระพิเศษ
+const API_URL      = '<?= BASE_URL ?>/api/tech_actions.php';
 const ADD_MASTER_URL = '<?= BASE_URL ?>/api/tech_add_master_data.php';
-const GET_DATA_URL = '<?= BASE_URL ?>/api/tech_get_dropdown_data.php';
+const GET_DATA_URL   = '<?= BASE_URL ?>/api/tech_get_dropdown_data.php';
+const JOB_ID         = <?= (int)$id ?>;
 
-const jobValues = {
-    st: '<?= $job['status'] ?>',
-    floor: '<?= addslashes(h($job['floor_name'])) ?>',
-    loc: '<?= addslashes(h($job['location_name'])) ?>',
-    cat: '<?= addslashes(h($job['category_name'])) ?>',
-    dev: '<?= addslashes(h($job['device_name'])) ?>',
-    flt: '<?= addslashes(h($job['fault_name'])) ?>',
-    sn: '<?= addslashes(h($job['serial_number'])) ?>',
-    img_db_count: <?= (int)$image_count_in_db ?> 
-};
+const jobValues = <?= $jobValuesJson ?>;
 
-// 1. จัดการ Fancybox
-Fancybox.bind("[data-fancybox]", { zIndex: 100000 });
+// ✅ แก้ไข 2: ประกาศฟังก์ชันทั้งหมดบน window object
+// เพื่อให้ onclick="updateStep(...)" ใน HTML เรียกได้จาก global scope เสมอ
+// แม้ว่า script นี้จะอยู่ใน module หรือ strict mode ก็ตาม
 
-// 2. ฟังก์ชันตรวจสอบสิทธิ์ และดำเนินการ
-function updateStep(newStatus) {
+window.updateStep = function(newStatus) {
+    // ✅ Guard: ตรวจสอบว่า Swal โหลดแล้ว
+    if (typeof Swal === 'undefined') {
+        alert('ระบบยังโหลดไม่สมบูรณ์ กรุณารีเฟรชหน้าเว็บครับ');
+        return;
+    }
+
     const noteElement = document.getElementById('tech_note');
     const noteValue = (noteElement) ? noteElement.value.trim() : "";
 
-    // เงื่อนไขบังคับตรวจสอบอุปกรณ์ (หากเริ่มงานใหม่)
-    if(jobValues.st === 'accepted' && newStatus === 'in_progress') return openModernAssetSetup();
-
-    // บังคับพิมพ์ผลดำเนินการหากจบงาน
-    if((newStatus==='completed' || newStatus==='cannot_repair') && noteValue === "") {
-        return Swal.fire({ icon:'warning', title:'ยังขาดบันทึกข้อมูลหลังการซ่อม', text:'ช่างต้องสรุปรายละเอียดงานซ่อมลงในช่องทางขวาก่อนกดปิดงานครับ' });
+    if (jobValues.st === 'accepted' && newStatus === 'in_progress') {
+        return window.openModernAssetSetup();
     }
 
-    let labels = {'completed':'สำเร็จเรียบร้อย', 'cannot_repair':'ทำไม่ได้/แจ้งพัสดุ', 'waiting_parts':'รออะไหล่', 'in_progress':'เริ่มงานต่อ'};
-    Swal.fire({
-        title:'ยืนยันความถูกต้อง?', text:`เปลี่ยนเป็น [${labels[newStatus]}]`,
-        icon:'question', showCancelButton:true, confirmButtonColor:'#003366', confirmButtonText:'ยืนยัน', cancelButtonText:'ยกเลิก'
-    }).then(r => { if(r.isConfirmed) executeUpdateOnly(newStatus, noteValue); });
-}
+    if ((newStatus === 'completed' || newStatus === 'cannot_repair') && noteValue === "") {
+        return Swal.fire({ 
+            icon: 'warning', 
+            title: 'ยังขาดบันทึกข้อมูลหลังการซ่อม', 
+            text: 'ช่างต้องสรุปรายละเอียดงานซ่อมลงในช่องทางขวาก่อนกดปิดงานครับ' 
+        });
+    }
 
-// 3. ฟังก์ชันเปิดหน้าตั้งค่า Master Data + รักษาสถานะข้อมูล (Persistence)
-function openModernAssetSetup(newDataObj = null, savedSnapshot = null) {
+    let labels = {
+        'completed':     'สำเร็จเรียบร้อย', 
+        'cannot_repair': 'ทำไม่ได้/แจ้งพัสดุ', 
+        'waiting_parts': 'รออะไหล่', 
+        'in_progress':   'เริ่มงานต่อ'
+    };
+
+    Swal.fire({
+        title: 'ยืนยันความถูกต้อง?', 
+        text: `เปลี่ยนเป็น [${labels[newStatus]}]`,
+        icon: 'question', 
+        showCancelButton: true, 
+        confirmButtonColor: '#003366', 
+        confirmButtonText: 'ยืนยัน', 
+        cancelButtonText: 'ยกเลิก'
+    }).then(r => { 
+        if (r.isConfirmed) window.executeUpdateOnly(newStatus, noteValue); 
+    });
+};
+
+window.openModernAssetSetup = function(newDataObj = null, savedSnapshot = null) {
+    // ✅ Guard: ตรวจสอบว่า Swal และ jQuery โหลดแล้ว
+    if (typeof Swal === 'undefined' || typeof $ === 'undefined') {
+        alert('ระบบยังโหลดไม่สมบูรณ์ กรุณารีเฟรชหน้าเว็บครับ');
+        return;
+    }
+
     Swal.fire({
         title: '<h5 class="fw-bold text-primary mb-0">ข้อมูลเครื่องและสถิติหน้างาน</h5>',
         width: '660px',
-        showCancelButton: true, confirmButtonText: 'ยืนยัน', confirmButtonColor: '#003366', cancelButtonText: 'ยกเลิก',
+        showCancelButton: true, 
+        confirmButtonText: 'ยืนยัน', 
+        confirmButtonColor: '#003366', 
+        cancelButtonText: 'ยกเลิก',
         html: `
             <div class="text-start p-1" style="max-height: 70vh; overflow-x: hidden;">
                 <label class="tag-title">1. สถานที่แจ้ง (ชั้น - ห้อง) <span class="text-danger">*</span></label>
@@ -200,7 +236,7 @@ function openModernAssetSetup(newDataObj = null, savedSnapshot = null) {
                     <div class="col-6">
                         <label class="tag-title">5. หมายเลข SERIAL NUMBER <span class="text-danger">*</span></label>
                         <div class="d-flex gap-2">
-                            <input id="s-sn" class="form-control rounded-3 border-primary-subtle" value="${savedSnapshot ? savedSnapshot.sn : jobValues.sn}" placeholder="ระบุเลขซีเรียล">
+                            <input id="s-sn" class="form-control rounded-3 border-primary-subtle" value="${savedSnapshot ? savedSnapshot.sn : (jobValues.sn && jobValues.sn !== 'null' ? jobValues.sn : '')}" placeholder="ระบุเลขซีเรียล">
                             <button class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center" style="width:42px;height:42px;flex-shrink:0" onclick="document.getElementById('s-sn').value='ไม่มีหมายเลขซีเรียล'"><i class="bi bi-x-lg"></i></button>
                         </div>
                     </div>
@@ -212,52 +248,64 @@ function openModernAssetSetup(newDataObj = null, savedSnapshot = null) {
             </div>
         `,
         didOpen: () => {
-            loadAsyncDropdowns(newDataObj, savedSnapshot);
+            window.loadAsyncDropdowns(newDataObj, savedSnapshot);
             $('#s-img-up').on('change', function(e) {
                 const zone = $('#pv-container').empty();
-                Array.from(e.target.files).slice(0,3).forEach(f => {
+                Array.from(e.target.files).slice(0, 3).forEach(f => {
                     let r = new FileReader(); 
-                    r.onload = ev => zone.append('<div class="col-4"><img src="'+ev.target.result+'" style="height:70px; width:100%; object-fit:cover; border-radius:10px;"></div>');
+                    r.onload = ev => zone.append('<div class="col-4"><img src="' + ev.target.result + '" style="height:70px; width:100%; object-fit:cover; border-radius:10px;"></div>');
                     r.readAsDataURL(f);
                 });
             });
         },
         preConfirm: () => {
-            const out = { l:$('#s-l').val(), cid:$('#s-c').val(), cat:$('#s-c option:selected').text(), did:$('#s-d').val(), dev:$('#s-d option:selected').text(), fid:$('#s-f').val(), flt:$('#s-f option:selected').text(), sn:$('#s-sn').val().trim(), images:$('#s-img-up')[0].files };
-            if(!out.l || !out.cid || !out.did || !out.fid || !out.sn) return Swal.showValidationMessage('กรอกข้อมูลดอกจัน * ให้ครบ');
-            if(jobValues.img_db_count === 0 && out.images.length === 0) return Swal.showValidationMessage('ผู้แจ้งไม่ได้แนบรูปมา ช่างต้องแนบหลักฐานอย่างน้อย 1 รูปครับ');
+            const out = { 
+                l:   $('#s-l').val(), 
+                cid: $('#s-c').val(), 
+                cat: $('#s-c option:selected').text(), 
+                did: $('#s-d').val(), 
+                dev: $('#s-d option:selected').text(), 
+                fid: $('#s-f').val(), 
+                flt: $('#s-f option:selected').text(), 
+                sn:  $('#s-sn').val().trim(), 
+                images: $('#s-img-up')[0].files 
+            };
+            if (!out.l || !out.cid || !out.did || !out.fid || !out.sn) {
+                return Swal.showValidationMessage('กรอกข้อมูลดอกจัน * ให้ครบ');
+            }
+            if (jobValues.img_db_count === 0 && out.images.length === 0) {
+                return Swal.showValidationMessage('ผู้แจ้งไม่ได้แนบรูปมา ช่างต้องแนบหลักฐานอย่างน้อย 1 รูปครับ');
+            }
             return out;
         }
-        }).then(res => { 
-            if (res.isConfirmed) {
-        Swal.fire({
-            title: 'ยืนยันความถูกต้อง?', 
-            text: 'คุณตรวจสอบข้อมูลเทคนิคเรียบร้อยแล้วและเริ่มดำเนินการซ่อม',
-            icon: 'question', 
-            showCancelButton: true, 
-            confirmButtonColor: '#003366', 
-            confirmButtonText: 'ยืนยัน',    // ปรับชื่อปุ่มยืนยัน
-            cancelButtonText: 'ยกเลิก',    // ปรับชื่อปุ่มยกเลิก
-            cancelButtonColor: '#6c757d'    // (ทางเลือก) เพิ่มสีเทาให้ปุ่มยกเลิกเพื่อให้ตัดกับสีน้ำเงิน
-        }).then(final => { 
-            if (final.isConfirmed) {
-                // หากกด ยืนยัน ให้ส่งข้อมูลชุดใหญ่
-                sendFullUpdatePackage(res.value); 
-            } else {
-                // หากกด ยกเลิก ให้พากลับไปหน้าป๊อปอัปกรอกข้อมูล (เพื่อแก้ไขต่อ)
-                openModernAssetSetup(null, res.value); 
-            }
-        });
-    }
+    }).then(res => { 
+        if (res.isConfirmed) {
+            Swal.fire({
+                title: 'ยืนยันความถูกต้อง?', 
+                text: 'คุณตรวจสอบข้อมูลเทคนิคเรียบร้อยแล้วและเริ่มดำเนินการซ่อม',
+                icon: 'question', 
+                showCancelButton: true, 
+                confirmButtonColor: '#003366', 
+                confirmButtonText: 'ยืนยัน',
+                cancelButtonText: 'ยกเลิก',
+                cancelButtonColor: '#6c757d'
+            }).then(final => { 
+                if (final.isConfirmed) {
+                    window.sendFullUpdatePackage(res.value); 
+                } else {
+                    window.openModernAssetSetup(null, res.value); 
+                }
+            });
+        }
     });
-}
+};
 
-// 4. ฟังชันดึง Dropdown พร้อมห้ามเลือกอันแรกให้อัตโนมัติ (Strict Mode)
-function loadAsyncDropdowns(newItem = null, restored = null) {
+window.loadAsyncDropdowns = function(newItem = null, restored = null) {
     $.getJSON(GET_DATA_URL + '?type=locations', d => {
         const s = $('#s-l').append('<option value="">-- โปรดระบุตำแหน่งจริง --</option>');
-        d.forEach(i => s.append(new Option(i.display_name, i.id, false, restored ? restored.l == i.id : (jobValues.floor+' - '+jobValues.loc) === i.display_name)));
+        d.forEach(i => s.append(new Option(i.display_name, i.id, false, restored ? restored.l == i.id : (jobValues.floor + ' - ' + jobValues.loc) === i.display_name)));
     });
+
     $.getJSON(GET_DATA_URL + '?type=categories', d => {
         const c = $('#s-c').append('<option value="">-- ระบุประเภท --</option>');
         d.forEach(i => {
@@ -268,48 +316,62 @@ function loadAsyncDropdowns(newItem = null, restored = null) {
     });
 
     $('#s-c').on('change', function() {
-        const pid = $(this).val(); if(pid === 'ADD') return addNewEntryHelper('category', 0);
+        const pid = $(this).val(); 
+        if (pid === 'ADD') return window.addNewEntryHelper('category', 0);
         const d_box = $('#s-d').empty().append('<option value="">-- ระบุเครื่อง/รุ่น --</option>').prop('disabled', !pid);
-        if(pid && $.isNumeric(pid)) $.getJSON(GET_DATA_URL + '?type=devices&parent_id=' + pid, data => {
-            data.forEach(i => {
-                let active = (newItem && newItem.type === 'device' && newItem.id == i.id) || (restored ? restored.did == i.id : i.device_name === jobValues.dev);
-                d_box.append(new Option(i.device_name, i.id, false, active));
+        if (pid && $.isNumeric(pid)) {
+            $.getJSON(GET_DATA_URL + '?type=devices&parent_id=' + pid, data => {
+                data.forEach(i => {
+                    let active = (newItem && newItem.type === 'device' && newItem.id == i.id) || (restored ? restored.did == i.id : i.device_name === jobValues.dev);
+                    d_box.append(new Option(i.device_name, i.id, false, active));
+                });
+                d_box.append(new Option('+ เพิ่มชื่อรุ่นใหม่...', 'ADD')).trigger('change');
             });
-            d_box.append(new Option('+ เพิ่มชื่อรุ่นใหม่...', 'ADD')).trigger('change');
-        });
+        }
     });
 
     $('#s-d').on('change', function() {
-        const did = $(this).val(); if(did === 'ADD') return addNewEntryHelper('device', $('#s-c').val());
+        const did = $(this).val(); 
+        if (did === 'ADD') return window.addNewEntryHelper('device', $('#s-c').val());
         const f_box = $('#s-f').empty().append('<option value="">-- ระบุอาการจริง --</option>').prop('disabled', !did);
-        if(did && $.isNumeric(did)) $.getJSON(GET_DATA_URL + '?type=faults&parent_id=' + did, data => {
-            data.forEach(i => {
-                let active = (newItem && newItem.type === 'fault' && newItem.id == i.id) || (restored ? restored.fid == i.id : i.fault_name === jobValues.flt);
-                f_box.append(new Option(i.fault_name, i.id, false, active));
+        if (did && $.isNumeric(did)) {
+            $.getJSON(GET_DATA_URL + '?type=faults&parent_id=' + did, data => {
+                data.forEach(i => {
+                    let active = (newItem && newItem.type === 'fault' && newItem.id == i.id) || (restored ? restored.fid == i.id : i.fault_name === jobValues.flt);
+                    f_box.append(new Option(i.fault_name, i.id, false, active));
+                });
+                f_box.append(new Option('+ เพิ่มอาการอื่นใหม่...', 'ADD'));
             });
-            f_box.append(new Option('+ เพิ่มอาการอื่นใหม่...', 'ADD'));
-        });
+        }
     });
-    $('#s-f').on('change', function() { if($(this).val() === 'ADD') addNewEntryHelper('fault', $('#s-d').val()); });
-}
 
-// 5. ตัวช่วยดักเพิ่ม Master Data ใหม่และรักษาตำแหน่งเดิม
-function addNewEntryHelper(type, pid) {
-    const curState = { l:$('#s-l').val(), cid:$('#s-c').val(), did:$('#s-d').val(), fid:$('#s-f').val(), sn:$('#s-sn').val() };
+    $('#s-f').on('change', function() { 
+        if ($(this).val() === 'ADD') window.addNewEntryHelper('fault', $('#s-d').val()); 
+    });
+};
+
+window.addNewEntryHelper = function(type, pid) {
+    const curState = { l: $('#s-l').val(), cid: $('#s-c').val(), did: $('#s-d').val(), fid: $('#s-f').val(), sn: $('#s-sn').val() };
     Swal.fire({
-        title: 'เพิ่มข้อมูลมาตรฐานใหม่', input: 'text', showCancelButton: true, confirmButtonColor: '#003366', cancelButtonText: 'ยกเลิก',
-        preConfirm: n => { if(!n) return Swal.showValidationMessage('กรุณาระบุชื่อข้อมูลครับ'); return $.post(ADD_MASTER_URL, {type, name:n, parent_id:pid}); }
+        title: 'เพิ่มข้อมูลมาตรฐานใหม่', 
+        input: 'text', 
+        showCancelButton: true, 
+        confirmButtonColor: '#003366', 
+        cancelButtonText: 'ยกเลิก',
+        preConfirm: n => { 
+            if (!n) return Swal.showValidationMessage('กรุณาระบุชื่อข้อมูลครับ'); 
+            return $.post(ADD_MASTER_URL, { type, name: n, parent_id: pid }); 
+        }
     }).then(r => { 
-        if(r.isConfirmed) openModernAssetSetup({type, id: r.value.new_id}, curState); 
-        else openModernAssetSetup(null, curState); 
+        if (r.isConfirmed) window.openModernAssetSetup({ type, id: r.value.new_id }, curState); 
+        else window.openModernAssetSetup(null, curState); 
     });
-}
+};
 
-// 6. ส่งแพ็กเกจข้อมูลอัปเดตแบบ AJAX ตัวหนา (ฉบับแก้ไข: สมูท + รีเฟรชชัวร์ 100%)
-function sendFullUpdatePackage(v) {
+window.sendFullUpdatePackage = function(v) {
     const fd = new FormData();
     fd.append('action', 'update_status'); 
-    fd.append('job_id', <?= $id ?>);
+    fd.append('job_id', JOB_ID);
     fd.append('new_status', 'in_progress'); 
     fd.append('tech_note', ($('#tech_note').val() || ""));
     fd.append('location_input', v.l); 
@@ -318,11 +380,10 @@ function sendFullUpdatePackage(v) {
     fd.append('fault_name', v.flt); 
     fd.append('serial_number', v.sn);
     
-    for(let i=0; i<v.images.length; i++) {
+    for (let i = 0; i < v.images.length; i++) {
         fd.append('repair_images[]', v.images[i]);
     }
 
-    // แสดงสถานะกำลังบันทึก
     Swal.fire({ 
         title: 'กำลังจัดบันทึกประวัติซ่อม...', 
         allowOutsideClick: false, 
@@ -335,31 +396,20 @@ function sendFullUpdatePackage(v) {
         data: fd, 
         processData: false, 
         contentType: false, 
-        dataType: 'json', // บังคับให้อ่านเป็น JSON
+        dataType: 'json',
         success: function(res) {
-            if(res.success) {
-                // ขึ้นป๊อปอัปสำเร็จสั้นๆ เพื่อให้ดู Smooth
-                Swal.fire({
-                    icon: 'success',
-                    title: 'บันทึกสำเร็จ',
-                    showConfirmButton: false,
-                    timer: 800
-                }).then(() => {
-                    location.reload(); 
-                });
+            if (res.success) {
+                Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', showConfirmButton: false, timer: 800 })
+                    .then(() => location.reload());
             } else {
                 Swal.fire('Error', res.error, 'error');
             }
         },
-        error: function() {
-            // กรณี Error จากเซิร์ฟเวอร์ ให้ลองรีเฟรช 1 รอบ
-            location.reload();
-        }
+        error: function() { location.reload(); }
     });
-}
+};
 
-function executeUpdateOnly(st, n) {
-    // แสดงสถานะกำลังบันทึก (กันการสะดุด)
+window.executeUpdateOnly = function(st, n) {
     Swal.fire({ 
         title: 'กำลังดำเนินการ...', 
         allowOutsideClick: false, 
@@ -369,32 +419,26 @@ function executeUpdateOnly(st, n) {
     $.ajax({ 
         url: API_URL, 
         type: 'POST', 
-        data: {
-            action: 'update_status', 
-            job_id: <?= $id ?>, 
-            new_status: st, 
-            tech_note: n
-        }, 
+        data: { action: 'update_status', job_id: JOB_ID, new_status: st, tech_note: n }, 
         dataType: 'json',
         success: function(res) {
-            if(res.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'ปรับสถานะแล้ว',
-                    showConfirmButton: false,
-                    timer: 800
-                }).then(() => {
-                    location.reload(); 
-                });
+            if (res.success) {
+                Swal.fire({ icon: 'success', title: 'ปรับสถานะแล้ว', showConfirmButton: false, timer: 800 })
+                    .then(() => location.reload());
             } else {
                 Swal.fire('Error', res.error, 'error');
             }
         },
-        error: function() {
-            location.reload();
-        }
+        error: function() { location.reload(); }
     });
-}
+};
+
+// ✅ แก้ไข 3: Init Fancybox หลัง DOM พร้อม
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof Fancybox !== 'undefined') {
+        Fancybox.bind("[data-fancybox]", { zIndex: 100000 });
+    }
+});
 </script>
 
 <?php require_once '../includes/tech_footer.php'; ?>
