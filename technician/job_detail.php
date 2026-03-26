@@ -2,7 +2,7 @@
 /*
 |------------------------------------------------------
 | File: technician/job_detail.php
-| Description: แก้ไขบั๊กการรีโหลด และ Error JavaScript ทั้งหน้า
+| Description: ฉบับสมบูรณ์ แก้ไขบั๊กการรีโหลด และ Error JavaScript ทั้งหน้า
 |------------------------------------------------------
 */
 require_once '../includes/tech_header.php'; 
@@ -138,7 +138,7 @@ $jobValuesJson = json_encode([
 
                         <div class="mt-4 border-top pt-3">
                             <label class="tag-title text-main">สรุปผลที่ช่างดำเนินการ (จำเป็นกรณีปิดงาน)</label>
-                            <textarea id="tech_note" class="form-control border-0 bg-light p-3" rows="8" placeholder="สรุปการซ่อม..." style="border-radius:15px; font-size:0.9rem;"></textarea>
+                            <textarea id="tech_note" class="form-control border-0 bg-light p-3" rows="8" placeholder="เขียนสรุป..." style="border-radius:15px; font-size:0.9rem;"></textarea>
                         </div>
                     <?php else: ?>
                         <div class="text-center py-5 bg-light rounded-4"><i class="bi bi-lock-fill display-5 text-muted"></i><p class="mt-3 fw-bold text-muted small">ปิดรายการแล้ว</p></div>
@@ -153,9 +153,10 @@ $jobValuesJson = json_encode([
 <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
 <script>
 // ✅ แก้ไข 1: ใช้ json_encode ฝั่ง PHP แทนการ embed string ตรงๆ
-const API_URL        = '../api/tech_actions.php';
-const ADD_MASTER_URL = '../api/tech_add_master_data.php';
-const GET_DATA_URL   = '../api/tech_get_dropdown_data.php';
+// ป้องกัน JS syntax error จากข้อมูลที่มี quote, newline หรืออักขระพิเศษ
+const API_URL      = '<?= BASE_URL ?>/api/tech_actions.php';
+const ADD_MASTER_URL = '<?= BASE_URL ?>/api/tech_add_master_data.php';
+const GET_DATA_URL   = '<?= BASE_URL ?>/api/tech_get_dropdown_data.php';
 const JOB_ID         = <?= (int)$id ?>;
 
 const jobValues = <?= $jobValuesJson ?>;
@@ -235,8 +236,8 @@ window.openModernAssetSetup = function(newDataObj = null, savedSnapshot = null) 
                     <div class="col-6">
                         <label class="tag-title">5. หมายเลข SERIAL NUMBER <span class="text-danger">*</span></label>
                         <div class="d-flex gap-2">
-                            <input id="s-sn" class="form-control rounded-3 border-primary-subtle" value="${savedSnapshot ? savedSnapshot.sn : (jobValues.sn && jobValues.sn !== 'null' ? jobValues.sn : '')}" placeholder="ระบุเลขซีเรียล">
-                            <button class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center" style="width:42px;height:42px;flex-shrink:0" onclick="document.getElementById('s-sn').value='ไม่มีหมายเลขซีเรียล'"><i class="bi bi-x-lg"></i></button>
+                            <input id="s-sn" class="form-control rounded-3 border-primary-subtle" value="${savedSnapshot ? savedSnapshot.sn : (jobValues.sn && jobValues.sn !== 'null' ? jobValues.sn : '')}" placeholder="รอตรวจสอบ">
+                            <button class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center" style="width:42px;height:42px;flex-shrink:0" title="ไม่มีซีเรียล" onclick="document.getElementById('s-sn').value='รอตรวจสอบ'"><i class="bi bi-x-lg"></i></button>
                         </div>
                     </div>
                 </div>
