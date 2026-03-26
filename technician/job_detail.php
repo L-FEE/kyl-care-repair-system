@@ -153,10 +153,9 @@ $jobValuesJson = json_encode([
 <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
 <script>
 // ✅ แก้ไข 1: ใช้ json_encode ฝั่ง PHP แทนการ embed string ตรงๆ
-// ป้องกัน JS syntax error จากข้อมูลที่มี quote, newline หรืออักขระพิเศษ
-const API_URL      = '<?= BASE_URL ?>/api/tech_actions.php';
-const ADD_MASTER_URL = '<?= BASE_URL ?>/api/tech_add_master_data.php';
-const GET_DATA_URL   = '<?= BASE_URL ?>/api/tech_get_dropdown_data.php';
+const API_URL        = '../api/tech_actions.php';
+const ADD_MASTER_URL = '../api/tech_add_master_data.php';
+const GET_DATA_URL   = '../api/tech_get_dropdown_data.php';
 const JOB_ID         = <?= (int)$id ?>;
 
 const jobValues = <?= $jobValuesJson ?>;
