@@ -132,8 +132,8 @@ $jobValuesJson = json_encode([
                             <div class="col-6"><button onclick="updateStep('cannot_repair')" class="btn btn-outline-danger btn-action-sm py-2" style="font-size:0.85rem;"><i class="bi bi-x-circle"></i>ซ่อมไม่ได้</button></div>
                         </div>
                         <?php else: ?>
-                             <div class="alert alert-warning py-2 text-center x-small fw-bold border-0 shadow-none">รายการนี้อยู่สถานะ: รออะไหล่</div>
                              <button onclick="updateStep('in_progress')" class="btn btn-primary btn-action-sm shadow w-100 py-3"><i class="bi bi-play-fill"></i> ได้รับอะไหล่/เริ่มงานต่อ</button>
+                             <div class="alert alert-warning py-2 text-center x-small fw-bold border-0 shadow-none">รายการนี้อยู่สถานะ: รออะไหล่</div>
                         <?php endif; ?>
 
                         <div class="mt-4 border-top pt-3">
