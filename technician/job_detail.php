@@ -138,7 +138,7 @@ $jobValuesJson = json_encode([
 
                         <div class="mt-4 border-top pt-3">
                             <label class="tag-title text-main">สรุปผลที่ช่างดำเนินการ (จำเป็นกรณีปิดงาน)</label>
-                            <textarea id="tech_note" class="form-control border-0 bg-light p-3" rows="8" placeholder="เขียนสรุป..." style="border-radius:15px; font-size:0.9rem;"></textarea>
+                            <textarea id="tech_note" class="form-control border-0 bg-light p-3" rows="8" placeholder="สรุปการซ่อม..." style="border-radius:15px; font-size:0.9rem;"></textarea>
                         </div>
                     <?php else: ?>
                         <div class="text-center py-5 bg-light rounded-4"><i class="bi bi-lock-fill display-5 text-muted"></i><p class="mt-3 fw-bold text-muted small">ปิดรายการแล้ว</p></div>
