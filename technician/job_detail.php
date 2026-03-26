@@ -2,7 +2,7 @@
 /*
 |------------------------------------------------------
 | File: technician/job_detail.php
-| Description: ฉบับสมบูรณ์ แก้ไขบั๊กการรีโหลด และ Error JavaScript ทั้งหน้า
+| Description: แก้ไขบั๊กการรีโหลด และ Error JavaScript ทั้งหน้า
 |------------------------------------------------------
 */
 require_once '../includes/tech_header.php'; 
